@@ -7,7 +7,7 @@ const InputElement = () => {
   const [inputHistory, setInputHistory] = useState([]);
   const updateInputAndHistory = (s) => {
     setInputText(s);
-    setInputHistory([...inputHistory, s]);
+    setInputHistory([s, ...inputHistory]);
   };
   const getTargetValueAndSetInputText = R.pipe(
     getTargetValue,
@@ -22,8 +22,8 @@ const InputElement = () => {
       <br />
       Input Text : {inputText}
       <h4>History</h4>
-      {inputHistory.map((s) => (
-        <div key={s}>{s}</div>
+      {inputHistory.map((s, i) => (
+        <div key={i}>{s}</div>
       ))}
     </div>
   );
