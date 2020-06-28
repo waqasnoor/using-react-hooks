@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useReducer } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useReducer,
+  useCallback,
+} from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../public/site.css";
@@ -8,36 +14,12 @@ import SpeakerData from "./SpeakerData";
 import SpeakerDetail from "./SpeakerDetail";
 
 import ConfigContext from "./ConfigContext";
+import { SpeakerReducer } from "./SpeakerReducer";
 
 const Speakers = ({}) => {
   const [speakingSaturday, setSpeakingSaturday] = useState(true);
   const [speakingSunday, setSpeakingSunday] = useState(true);
-
-  // const [speakerList, setSpeakerList] = useState([]);
-
-  const speakerReducer = (state, action) => {
-    function updateFavorite(favoriteValue) {
-      return state.map((speaker) => {
-        if (speaker.id === action.sessionId) {
-          return { ...speaker, favorite: favoriteValue };
-        }
-        return speaker;
-      });
-    }
-
-    switch (action.type) {
-      case "setSpeakerList":
-        return action.data;
-      case "favorite":
-        return updateFavorite(true);
-      case "unfavorite":
-        return updateFavorite(false);
-
-      default:
-        return state;
-    }
-  };
-  const [speakerList, dispatch] = useReducer(speakerReducer, []);
+  const [speakerList, dispatch] = useReducer(SpeakerReducer, []);
   const [isLoading, setIsLoading] = useState(true);
 
   const AppContext = useContext(ConfigContext);
@@ -58,7 +40,7 @@ const Speakers = ({}) => {
     return () => {
       console.log("cleanup");
     };
-  }, []); // [speakingSunday, speakingSaturday]);
+  }, []);
 
   const handleChangeSaturday = () => {
     setSpeakingSaturday(!speakingSaturday);
@@ -84,14 +66,14 @@ const Speakers = ({}) => {
     setSpeakingSunday(!speakingSunday);
   };
 
-  const heartFavoriteHandler = (e, favoriteValue) => {
+  const heartFavoriteHandler = useCallback((e, favoriteValue) => {
     e.preventDefault();
     const sessionId = parseInt(e.target.attributes["data-sessionid"].value);
     dispatch({
       type: favoriteValue ? "favorite" : "unfavorite",
       sessionId,
     });
-  };
+  }, []);
   if (isLoading) return <div>Loading...</div>;
   return (
     <div>
