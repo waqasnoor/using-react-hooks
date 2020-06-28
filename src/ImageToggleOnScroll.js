@@ -1,40 +1,41 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, {useRef, useEffect, useState} from "react";
 
-const ImageToggleOverMouse = ({ primary, secondary }) => {
-  const imageRef = useRef(null);
-  const [inView, setInView] = useState(false);
-  const [componentState, setComponentState] = useState("isLoading");
+const ImageToggleOnScroll = ({ primaryImg, secondaryImg }) => {
 
-  useEffect(() => {
-    window.addEventListener("scroll", scrollHandler);
-    scrollHandler();
-    setComponentState("ready");
-    return () => {
-      window.removeEventListener("scroll", scrollHandler);
+    const imageRef = useRef(null);
+    const [isLoading,setIsLoading] = useState(true);
+
+    useEffect(() => {
+        window.addEventListener("scroll", scrollHandler);
+        setInView(isInView());
+        setIsLoading(false);
+        return ( () => {
+            window.removeEventListener("scroll", scrollHandler);
+        });
+    },[isLoading]);
+
+    const [inView,setInView] = useState(false);
+
+    const isInView = () => {
+        if (imageRef.current) {
+            const rect = imageRef.current.getBoundingClientRect();
+            return rect.top >= 0 && rect.bottom <= window.innerHeight;
+        }
+        return false;
     };
-  }, [componentState]);
 
-  const isInView = () => {
-    if (imageRef.current) {
-      const rect = imageRef.current.getBoundingClientRect();
-      return rect.top >= 0 && rect.bottom <= window.innerHeight;
-    }
-    return false;
-  };
-  const scrollHandler = () => {
-    setInView(isInView);
-  };
+    const scrollHandler = () => {
+        setInView(() => {
+            return isInView();
+        });
+    };
 
-  return componentState === "isLoading" ? null : (
-    <>
-      <img
-        src={inView ? secondary : primary}
-        alt=""
-        ref={imageRef}
-        width="200"
-        height="200"
-      />
-    </>
-  );
+    return isLoading ? null : (
+        <img
+            src={inView ? secondaryImg : primaryImg}
+            alt="" ref={imageRef} width="200" height="200"
+        />
+    );
 };
-export default ImageToggleOverMouse;
+
+export default ImageToggleOnScroll;

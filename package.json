@@ -1,19 +1,30 @@
 {
-  "name": "using-react-hooks",
+  "name": "React-App-Learning-React-Hooks",
   "version": "1.0.0",
-  "description": "Improving React skills",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start"
   },
-  "author": "",
+  "keywords": [],
+  "author": "Peter Kellner",
   "license": "ISC",
   "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "bootstrap": "^4.5.0",
     "next": "^9.4.4",
-    "ramda": "^0.27.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-toastify": "^6.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^4.0.4",
+    "prettier": "2.0.5",
+    "react-hooks": "^1.0.1",
+    "react-performance": "0.0.5"
   }
 }
