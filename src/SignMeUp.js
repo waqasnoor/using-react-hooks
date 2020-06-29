@@ -8,7 +8,7 @@ const SignMeUp = ({ signupCallback }) => {
   useEffect(() => {
     console.log(`SignMeUp:useEffect called`);
   });
-  const context = useContext(ConfigContext);
+  const { context, setContext } = useContext(ConfigContext);
 
   const [email, setEmail] = useState();
   const [emailValid, setEmailValid] = useState(false);
@@ -27,6 +27,7 @@ const SignMeUp = ({ signupCallback }) => {
     setSendProcessing(true);
     new Promise(function (resolve) {
       setTimeout(function () {
+        setContext({ ...context, loggedInUser: email });
         setSendProcessing(false);
         setEmail("");
         resolve();
@@ -38,9 +39,35 @@ const SignMeUp = ({ signupCallback }) => {
     });
   }
 
-  const buttonText = sendProcessing ? "processing..." : "Get Updates";
+  function Logout() {
+    setSendProcessing(true);
+    new Promise(function (resolve) {
+      setTimeout(function () {
+        setContext({ ...context, loggedInUser: "" });
+        setSendProcessing(false);
+        resolve();
+      }, 1000);
+    }).then(() => {
+      // notify();
+      signupCallback(email);
+      setEmail("");
+    });
+  }
+  const buttonText = sendProcessing ? "processing..." : "Login";
 
   //console.log("src/SignMeUp called");
+  if (context.loggedInUser) {
+    return (
+      <div className="container">
+        <div className="content">
+          <span>Logged in user {context.loggedInUser}</span> &nbsp; &nbsp;
+          <button className="btn" onClick={Logout} type="submit">
+            Logout
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return context.showSignup ? (
     <div className="container">

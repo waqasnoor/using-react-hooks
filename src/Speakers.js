@@ -14,7 +14,7 @@ const Speakers = ({}) => {
   const [speakingSaturday, setSpeakingSaturday] = useState(true);
   const [speakingSunday, setSpeakingSunday] = useState(true);
 
-  const AppContext = useContext(ConfigContext);
+  const { context } = useContext(ConfigContext);
 
   const {
     isLoading,
@@ -71,7 +71,7 @@ const Speakers = ({}) => {
       <Header />
       <Menu />
       <div className="container">
-        {AppContext.showSpeakerSpeakingDay ? (
+        {context.showSpeakerSpeakingDay ? (
           <div className="btn-toolbar  margintopbottom5 checkbox-bigger">
             <div className="hide">
               <div className="form-check-inline">
