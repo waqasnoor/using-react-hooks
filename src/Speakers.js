@@ -1,47 +1,45 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useReducer,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useContext, useCallback } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../public/site.css";
 import { Header } from "../src/Header";
 import { Menu } from "../src/Menu";
-import SpeakerData from "./SpeakerData";
 import SpeakerDetail from "./SpeakerDetail";
 
 import ConfigContext from "./ConfigContext";
-import { SpeakerReducer } from "./SpeakerReducer";
+import useAxiosFetch from "./useAxiosFetch";
 
 const Speakers = ({}) => {
   const [speakingSaturday, setSpeakingSaturday] = useState(true);
   const [speakingSunday, setSpeakingSunday] = useState(true);
-  const [speakerList, dispatch] = useReducer(SpeakerReducer, []);
-  const [isLoading, setIsLoading] = useState(true);
 
   const AppContext = useContext(ConfigContext);
 
-  useEffect(() => {
-    setIsLoading(true);
-    new Promise(function (resolve) {
-      setTimeout(function () {
-        resolve();
-      }, 1000);
-    }).then(() => {
-      setIsLoading(false);
-      const speakerListServerFilter = SpeakerData.filter(({ sat, sun }) => {
-        return (speakingSaturday && sat) || (speakingSunday && sun);
-      });
-      dispatch({ type: "setSpeakerList", data: speakerListServerFilter });
-    });
-    return () => {
-      console.log("cleanup");
-    };
-  }, []);
+  const {
+    isLoading,
+    isError,
+    errorMessage,
+    data,
+    updateDataRecord,
+  } = useAxiosFetch("http://localhost:4000/speakers", []);
+
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   new Promise(function (resolve) {
+  //     setTimeout(function () {
+  //       resolve();
+  //     }, 1000);
+  //   }).then(() => {
+  //     setIsLoading(false);
+  //     const speakerListServerFilter = SpeakerData.filter(({ sat, sun }) => {
+  //       return (speakingSaturday && sat) || (speakingSunday && sun);
+  //     });
+  //     dispatch({ type: "setSpeakerList", data: speakerListServerFilter });
+  //   });
+  //   return () => {
+  //     console.log("cleanup");
+  //   };
+  // }, []);
 
   const handleChangeSaturday = () => {
     setSpeakingSaturday(!speakingSaturday);
@@ -65,7 +63,7 @@ const Speakers = ({}) => {
 
   const speakerListFiltered = isLoading
     ? []
-    : speakerList
+    : data
         .filter(
           ({ sat, sun }) => (speakingSaturday && sat) || (speakingSunday && sun)
         )
@@ -82,16 +80,21 @@ const Speakers = ({}) => {
   const handleChangeSunday = () => {
     setSpeakingSunday(!speakingSunday);
   };
-  console.log("parent rendering");
-  const heartFavoriteHandler = useCallback((e, favoriteValue) => {
-    e.preventDefault();
-    const sessionId = parseInt(e.target.attributes["data-sessionid"].value);
-    dispatch({
-      type: favoriteValue ? "favorite" : "unfavorite",
-      sessionId,
-    });
-  }, []);
+  console.log("parent rendering ******************", data);
+  const heartFavoriteHandler = useCallback(
+    (e, favoriteValue) => {
+      e.preventDefault();
+      const sessionId = parseInt(e.target.attributes["data-sessionid"].value);
+      console.log(sessionId, data);
+      const record = data.find((rec) => rec.id === sessionId);
+      updateDataRecord({ ...record, favorite: !record.favorite });
+    },
+    [data]
+  );
   if (isLoading) return <div>Loading...</div>;
+  if (isError) {
+    return <div>{errorMessage}</div>;
+  }
   return (
     <div>
       <Header />
