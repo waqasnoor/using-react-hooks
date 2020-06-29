@@ -17,6 +17,11 @@ export class Menu extends Component {
                 <a className="nav-link">Speakers</a>
               </Link>
             </li>
+            <li className="nav-item">
+              <Link href="/emailvalidating">
+                <a className="nav-link">Validate Email</a>
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>

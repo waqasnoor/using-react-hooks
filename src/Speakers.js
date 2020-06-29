@@ -47,27 +47,42 @@ const Speakers = ({}) => {
     setSpeakingSaturday(!speakingSaturday);
   };
 
-  const speakerMemoizedList = useMemo(() => {
-    return speakerList
-      .filter(
-        ({ sat, sun }) => (speakingSaturday && sat) || (speakingSunday && sun)
-      )
-      .sort(function (a, b) {
-        if (a.firstName < b.firstName) {
-          return -1;
-        }
-        if (a.firstName > b.firstName) {
-          return 1;
-        }
-        return 0;
-      });
-  }, [speakerList, speakingSaturday, speakingSunday]);
+  // const speakerMemoizedList = useMemo(() => {
+  //   return speakerList
+  //     .filter(
+  //       ({ sat, sun }) => (speakingSaturday && sat) || (speakingSunday && sun)
+  //     )
+  //     .sort(function (a, b) {
+  //       if (a.firstName < b.firstName) {
+  //         return -1;
+  //       }
+  //       if (a.firstName > b.firstName) {
+  //         return 1;
+  //       }
+  //       return 0;
+  //     });
+  // }, [speakerList, speakingSaturday, speakingSunday]);
 
-  const speakerListFiltered = isLoading ? [] : speakerMemoizedList;
+  const speakerListFiltered = isLoading
+    ? []
+    : speakerList
+        .filter(
+          ({ sat, sun }) => (speakingSaturday && sat) || (speakingSunday && sun)
+        )
+        .sort(function (a, b) {
+          if (a.firstName < b.firstName) {
+            return -1;
+          }
+          if (a.firstName > b.firstName) {
+            return 1;
+          }
+          return 0;
+        });
+
   const handleChangeSunday = () => {
     setSpeakingSunday(!speakingSunday);
   };
-
+  console.log("parent rendering");
   const heartFavoriteHandler = useCallback((e, favoriteValue) => {
     e.preventDefault();
     const sessionId = parseInt(e.target.attributes["data-sessionid"].value);
